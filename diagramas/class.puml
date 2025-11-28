@@ -1,0 +1,70 @@
+@startuml
+' Fondo blanco y estilo clásico
+skinparam backgroundColor white
+skinparam monochrome true
+
+title **Diagrama de Clases - Sistema de Gestión de Tareas**
+
+' ====================
+' Definición de clases
+' ====================
+class Persona {
+  - id: int
+  - nombre: str
+  - edad: int
+  - correo: str
+  + mostrar_informacion(): str
+}
+
+class Empleado {
+  - puesto: str
+  - turno: Turno
+  - tareas_asignadas: List<Tarea>
+  + asignar_tarea(t: Tarea)
+  + registrar_asistencia(fecha: date, presente: bool)
+  + mostrar_informacion(): str
+}
+
+class Supervisor {
+  - area: str
+  - equipo: List<Empleado>
+  + asignar_turno(e: Empleado, t: Turno)
+  + supervisar_tarea(e: Empleado, t: Tarea)
+  + mostrar_equipo(): List<Empleado>
+}
+
+class Tarea {
+  - descripcion: str
+  - area: str
+  - duracion_estimada: int
+  - estado: str
+  + marcar_completada()
+}
+
+class Turno {
+  - id_turno: int
+  - hora_inicio: time
+  - hora_fin: time
+  - area: str
+  + mostrar_turno()
+}
+
+class Area {
+  - nombre: str
+  - responsable: Supervisor
+  - personal: List<Empleado>
+  + agregar_empleado(e: Empleado)
+  + mostrar_personal(): List<Empleado>
+}
+
+' ====================
+' Relaciones
+' ====================
+Persona <|-- Empleado
+Persona <|-- Supervisor
+Empleado "1" -- "*" Tarea : asigna >
+Supervisor "1" -- "*" Empleado : supervisa >
+Area "1" -- "*" Empleado : pertenece >
+Empleado "1" -- "1" Turno : trabaja_en >
+
+@enduml

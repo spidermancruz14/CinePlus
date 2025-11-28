@@ -1,0 +1,19 @@
+@startuml
+|Supervisor|
+start
+:Selecciona empleado y tarea;
+
+|Sistema|
+:Verifica si el empleado está disponible;
+
+if (Empleado disponible?) then (Sí)
+  :Asigna tarea al empleado;
+  :Notifica al empleado;
+  :Actualiza registro de tareas;
+else (No)
+  :Registra tarea como pendiente;
+  :Notifica al supervisor;
+endif
+
+stop
+@enduml

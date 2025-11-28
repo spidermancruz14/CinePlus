@@ -1,0 +1,34 @@
+CinePlus - Gestión Humana (Memoria del caso de estudio)
+
+1. Resumen
+CinePlus - Gestión Humana es un sistema orientado a objetos para administrar el personal y las actividades laborales dentro de un cine. El sistema permite registrar empleados y supervisores, organizar turnos, asignar tareas y llevar control de asistencia. No gestiona ventas ni boletos; su enfoque es exclusivamente humano y organizacional.
+
+2. Objetivos
+- Registrar la plantilla de empleados y supervisores.
+- Organizar turnos por área y horario.
+- Asignar y supervisar tareas.
+- Registrar asistencia diaria y generar reportes de cumplimiento.
+
+3. Principios de POO aplicados
+- Abstracción: Modelado de entidades humanas (Persona, Empleado, Supervisor, Tarea, Turno, Área).
+- Encapsulamiento: Atributos internos protegidos; acceso mediante métodos.
+- Herencia: Persona es superclase; Empleado y Supervisor son subclases.
+- Polimorfismo: Métodos como mostrar_informacion() redefinidos en subclases.
+
+4. Reglas de negocio
+- Un empleado solo puede tener un turno activo al mismo tiempo.
+- Los supervisores pueden asignar tareas y turnos únicamente dentro de su área.
+- Si una tarea queda pendiente más de X días, se notifica al gerente (regla opcional).
+- Registro obligatorio de asistencia diaria por empleado.
+
+5. Entregables incluidos
+- Diagramas PlantUML (.puml): usecase.puml, class.puml, collaboration_asignar_tarea.puml, activity_asignar_tarea.puml
+- Código fuente: cineplus.py
+- Memoria (este archivo)
+
+6. Cómo generar las imágenes
+- Abrir cada archivo .puml en PlantUML (https://plantuml.com/plantuml) o en un editor compatible (VSCode + PlantUML extension).
+- Exportar a PNG/PDF desde la herramienta.
+
+7. Notas finales
+El sistema es escalable: se puede añadir control más complejo de turnos, integración con nómina, gestión de permisos y reportes avanzados de desempeño.

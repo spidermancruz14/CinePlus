@@ -1,0 +1,20 @@
+@startuml
+actor Supervisor
+participant "Interfaz de Usuario" as UI
+participant "Control de Tareas" as CT
+participant "Empleado" as E
+participant "Tarea" as T
+
+Supervisor -> UI: Solicita asignación de tarea
+UI -> CT: Envía datos del empleado y tarea
+CT -> E: Asigna tarea
+E -> T: Añade tarea a su lista
+T --> E: Confirma adición
+E --> CT: Confirma recepción
+CT -> UI: Notifica asignación exitosa
+UI --> Supervisor: Muestra confirmación
+
+note right of UI
+  Asignación completada con éxito
+end note
+@enduml

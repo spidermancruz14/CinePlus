@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+actor "Supervisor" as S
+actor "Empleado" as E
+actor "Gerente" as G
+
+package "CinePlus - Gestión Humana" {
+  usecase "Registrar Empleado" as UC1
+  usecase "Registrar Supervisor" as UC2
+  usecase "Asignar Turno" as UC3
+  usecase "Asignar Tarea" as UC4
+  usecase "Registrar Asistencia" as UC5
+  usecase "Consultar Personal" as UC6
+  usecase "Generar Reportes de Personal" as UC7
+}
+
+S --> UC3
+S --> UC4
+S --> UC5
+G --> UC6
+G --> UC7
+E --> UC5
+G --> UC1
+G --> UC2
+@enduml
