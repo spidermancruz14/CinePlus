@@ -1,19 +1,32 @@
 # employees_dao.py
+import os
 import sqlite3
 
-DB_NAME = "cineplus.db"
+# ------------------- CONFIGURAR BASE DE DATOS -------------------
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_FOLDER = os.path.join(BASE_DIR, "..", "cineplus_db")
+DB_FOLDER = os.path.abspath(DB_FOLDER)
+
+# Crear carpeta si no existe
+if not os.path.exists(DB_FOLDER):
+    os.makedirs(DB_FOLDER)
+
+# Ruta completa del archivo
+DB_NAME = os.path.join(DB_FOLDER, "cineplus.db")
+
 
 def conectar():
+    """Conecta a SQLite usando ruta absoluta"""
     return sqlite3.connect(DB_NAME)
 
 
-# ------------------ CREAR TABLAS -------------------
+# ------------------- CREAR TABLAS -------------------
 
 def crear_tablas():
     conn = conectar()
     cur = conn.cursor()
 
-    # Tabla empleados
     cur.execute("""
         CREATE TABLE IF NOT EXISTS empleados (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +38,6 @@ def crear_tablas():
         )
     """)
 
-    # Tabla turnos
     cur.execute("""
         CREATE TABLE IF NOT EXISTS turnos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,16 +48,14 @@ def crear_tablas():
         )
     """)
 
-    # Tabla áreas
     cur.execute("""
         CREATE TABLE IF NOT EXISTS areas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
+            nombre TEXT,
             descripcion TEXT
         )
     """)
 
-    # Tabla tareas
     cur.execute("""
         CREATE TABLE IF NOT EXISTS tareas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +70,7 @@ def crear_tablas():
     conn.close()
 
 
-# ------------------ TURNOS POR DEFECTO -------------------
+# ------------------- TURNOS POR DEFECTO -------------------
 
 def insertar_turnos_por_defecto():
     conn = conectar()
@@ -82,16 +92,16 @@ def insertar_turnos_por_defecto():
         """, turnos)
 
         conn.commit()
-        print("✅ Turnos insertados por defecto.")
+        print("✅ Turnos insertados.")
     else:
-        print("✔️ La tabla turnos ya tenía datos.")
+        print("✔️ Tabla turnos ya tenía datos.")
 
     conn.close()
 
 
-# ------------------ CRUD EMPLEADOS -------------------
+# ------------------- CRUD EMPLEADOS -------------------
 
-def agregar_empleado(nombre, edad, correo, puesto, turno=None):
+def agregar_empleado(nombre, edad, correo, puesto, turno):
     conn = conectar()
     cur = conn.cursor()
     cur.execute("""
@@ -147,8 +157,8 @@ def actualizar_empleado(emp_id, nombre, edad, correo, puesto, turno):
     cur = conn.cursor()
     cur.execute("""
         UPDATE empleados SET
-        nombre = ?, edad = ?, correo = ?, puesto = ?, turno = ?
-        WHERE id = ?
+        nombre=?, edad=?, correo=?, puesto=?, turno=?
+        WHERE id=?
     """, (nombre, edad, correo, puesto, turno, emp_id))
     conn.commit()
     conn.close()
@@ -157,17 +167,17 @@ def actualizar_empleado(emp_id, nombre, edad, correo, puesto, turno):
 def eliminar_empleado(emp_id):
     conn = conectar()
     cur = conn.cursor()
-    cur.execute("DELETE FROM empleados WHERE id = ?", (emp_id,))
+    cur.execute("DELETE FROM empleados WHERE id=?", (emp_id,))
     conn.commit()
     conn.close()
 
 
-# ------------------ CRUD TURNOS -------------------
+# ------------------- CRUD TURNOS -------------------
 
 def obtener_turnos():
     conn = conectar()
     cur = conn.cursor()
-    cur.execute("SELECT id, nombre, inicio, fin, area FROM turnos")
+    cur.execute("SELECT * FROM turnos")
     rows = cur.fetchall()
     conn.close()
 
@@ -183,7 +193,7 @@ def obtener_turnos():
     return turnos
 
 
-def agregar_turno(nombre, inicio, fin, area=None):
+def agregar_turno(nombre, inicio, fin, area):
     conn = conectar()
     cur = conn.cursor()
     cur.execute("""
@@ -198,9 +208,8 @@ def actualizar_turno(turno_id, nombre, inicio, fin, area):
     conn = conectar()
     cur = conn.cursor()
     cur.execute("""
-        UPDATE turnos
-        SET nombre = ?, inicio = ?, fin = ?, area = ?
-        WHERE id = ?
+        UPDATE turnos SET nombre=?, inicio=?, fin=?, area=?
+        WHERE id=?
     """, (nombre, inicio, fin, area, turno_id))
     conn.commit()
     conn.close()
@@ -209,70 +218,15 @@ def actualizar_turno(turno_id, nombre, inicio, fin, area):
 def eliminar_turno(turno_id):
     conn = conectar()
     cur = conn.cursor()
-    cur.execute("DELETE FROM turnos WHERE id = ?", (turno_id,))
+    cur.execute("DELETE FROM turnos WHERE id=?", (turno_id,))
     conn.commit()
     conn.close()
 
 
-# ------------------ CRUD ÁREAS -------------------
+# ------------------- AUTO EJECUCIÓN -------------------
 
-def agregar_area(nombre, descripcion=None):
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO areas (nombre, descripcion) VALUES (?, ?)", (nombre, descripcion))
-    conn.commit()
-    conn.close()
-
-
-def obtener_areas():
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM areas")
-    rows = cur.fetchall()
-    conn.close()
-    return rows
-
-
-def eliminar_area(area_id):
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM areas WHERE id = ?", (area_id,))
-    conn.commit()
-    conn.close()
-
-
-# ------------------ CRUD TAREAS -------------------
-
-def agregar_tarea(descripcion, empleado_id=None, fecha=None):
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO tareas (descripcion, empleado_id, fecha)
-        VALUES (?, ?, ?)
-    """, (descripcion, empleado_id, fecha))
-    conn.commit()
-    conn.close()
-
-
-def obtener_tareas():
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM tareas")
-    rows = cur.fetchall()
-    conn.close()
-    return rows
-
-
-def eliminar_tarea(tarea_id):
-    conn = conectar()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM tareas WHERE id = ?", (tarea_id,))
-    conn.commit()
-    conn.close()
-
-
-# ------------------ AUTO EJECUCIÓN -------------------
-
-crear_tablas()
-insertar_turnos_por_defecto()
-print("✅ Base de datos lista.")
+if __name__ == "__main__":
+    print("🔧 Inicializando base de datos CinePlus...")
+    crear_tablas()
+    insertar_turnos_por_defecto()
+    print("📦 Listo.")

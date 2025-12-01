@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import employees_dao as dao
+from dao import employees_dao as dao
+
 
 
 # ======================================================
